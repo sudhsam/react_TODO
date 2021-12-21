@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import { VStack, Box } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import Header from "./components/Header";
+import Todos from "./components/Todos";
+import AddTodo from "./components/AddTodo";
+
+const initialTodo = [
+  {
+    id: 1,
+    text: "Hello",
+  },
+];
 
 function App() {
+  const [todos, setTodos] = useState(
+    () => JSON.parse(localStorage.getItem("todos")) || []
+  ); //initialTodo
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const deleteTodo = (id) => {
+    const updatedTodo = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodo);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <VStack>
+      <Header />
+      <Box w="100%" maxW={{ base: "80vw", sm: "80vw", lg: "50vw", xl: "40vw" }}>
+        <AddTodo todos={todos} setTodos={setTodos} />
+        <Todos todos={todos} deleteTodo={deleteTodo} />
+      </Box>
+    </VStack>
   );
 }
 
